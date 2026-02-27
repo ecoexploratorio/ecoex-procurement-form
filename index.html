@@ -1962,33 +1962,44 @@
       return { method, approval };
     }
 
-    async function submitForm() {
-      const nextBtn = document.getElementById('nextBtn');
-      const originalText = nextBtn.innerHTML;
-      nextBtn.innerHTML = '<div class="spinner"></div>';
-      nextBtn.disabled = true;
+   async function submitForm() {
+  const nextBtn = document.getElementById('nextBtn');
+  const originalText = nextBtn.innerHTML;
+  nextBtn.innerHTML = '<div class="spinner"></div>';
+  nextBtn.disabled = true;
 
-      try {
-        // In production, this would send to Google Apps Script
-        await new Promise(resolve => setTimeout(resolve, 2000));
+  try {
+    // Send to Google Apps Script
+    const response = await fetch('https://script.google.com/a/macros/ecoexploratorio.org/s/AKfycbzVsk2ymFw1kXKabjHvSN11N_GbgBXROIHtT2F0rNRj7VCvfsQeZ01c0VFNxJoIpBpDyA/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'submitPR',
+        ...formData
+      })
+    });
 
-        const year = new Date().getFullYear();
-        const randomNum = Math.floor(Math.random() * 900) + 100;
-        const prNumber = `PR-${year}-${randomNum}`;
+    // Show success
+    document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+    document.getElementById('formNav').style.display = 'none';
+    document.getElementById('successSection').style.display = 'block';
+    
+    const year = new Date().getFullYear();
+    const randomNum = Math.floor(Math.random() * 900) + 100;
+    const prNumber = `PR-${year}-${randomNum}`;
+    document.getElementById('prNumber').textContent = prNumber;
 
-        document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
-        document.getElementById('formNav').style.display = 'none';
-        document.getElementById('successSection').style.display = 'block';
-        document.getElementById('prNumber').textContent = prNumber;
-
-        console.log('Form Data v1.2:', formData);
-        
-      } catch (error) {
-        alert('Error al enviar la solicitud. Por favor intenta de nuevo.');
-        nextBtn.innerHTML = originalText;
-        nextBtn.disabled = false;
-      }
-    }
+    console.log('Form Data v1.3:', formData);
+    
+  } catch (error) {
+    alert('Error al enviar la solicitud. Por favor intenta de nuevo.');
+    nextBtn.innerHTML = originalText;
+    nextBtn.disabled = false;
+  }
+}
   </script>
 </body>
 </html>
