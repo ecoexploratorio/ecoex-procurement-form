@@ -1962,25 +1962,31 @@
       return { method, approval };
     }
 
-   async function submitForm() {
+ async function submitForm() {
   const nextBtn = document.getElementById('nextBtn');
   const originalText = nextBtn.innerHTML;
   nextBtn.innerHTML = '<div class="spinner"></div>';
   nextBtn.disabled = true;
 
   try {
+    // Prepare data
+    const submitData = {
+      action: 'submitPR',
+      ...formData
+    };
+    
+    console.log('Sending data:', submitData);
+
     // Send to Google Apps Script
-    const response = await fetch('https://script.google.com/a/macros/ecoexploratorio.org/s/AKfycbzVsk2ymFw1kXKabjHvSN11N_GbgBXROIHtT2F0rNRj7VCvfsQeZ01c0VFNxJoIpBpDyA/exec', {
+   const response = await fetch('https://script.google.com/macros/s/AKfycbzVsk2ymFw1kXKabjHvSN11N_GbgBXROIHtT2F0rNRj7VCvfsQeZ01c0VFNxJoIpBpDyA/exec', {
       method: 'POST',
-      mode: 'no-cors',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
-      body: JSON.stringify({
-        action: 'submitPR',
-        ...formData
-      })
+      body: JSON.stringify(submitData)
     });
+
+    console.log('Response received');
 
     // Show success
     document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
@@ -1995,11 +2001,27 @@
     console.log('Form Data v1.3:', formData);
     
   } catch (error) {
+    console.error('Submit error:', error);
     alert('Error al enviar la solicitud. Por favor intenta de nuevo.');
     nextBtn.innerHTML = originalText;
     nextBtn.disabled = false;
   }
 }
-  </script>
-</body>
-</html>
+```
+
+**Commit changes**
+
+---
+
+## 🧪 TESTING CON CONSOLE:
+
+**Después de 2 minutos:**
+
+1. **Abre el formulario**
+2. **Presiona F12** (abre Developer Tools)
+3. **Ve a la tab "Console"**
+4. **Llena y submit el PR**
+5. **Mira la Console** - debería decir:
+```
+   Sending data: {...}
+   Response received
